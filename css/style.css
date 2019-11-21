@@ -1,0 +1,78 @@
+@charset "utf-8";
+html {
+  height:100%;
+  font-family: 'Dosis', sans-serif;
+  color: #fff;
+  background-image: url('../image/spider.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(4, 60, 120, .9);
+}
+h1 {
+    text-align: right;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    padding: 0 10px;
+    color: #fff;
+}
+.content {
+    width:90vw;
+    height: 80vh;
+    margin: 0 auto;
+    position: relative;
+}
+/* card-lists */
+.card-lists img {
+    width: 100%;
+}
+.card-lists {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: 80vw;
+}
+.card-lists .card-list {
+    width: 120px;
+    height: 140px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.card-lists .card-list .card-item {
+    width: 120px;
+    cursor: grab;
+    position: relative;
+}
+.card-lists .card-list .card-item:active {
+    cursor: grabbing;
+}
+.card-lists .card-list .card-item{
+    position: absolute;
+    top: 30px;
+}
+.card-lists .card-list > .card-item{
+    top: 0;
+}
+.card-lists .card-list .card-hidden > .nested-sortable > .card-item {
+    top: 12px;
+}
+.card-lists .card-list .card-item > .nested-sortable {
+    width: 120px;
+    height:170px;
+    position: absolute;
+    top: 0;
+}
+
+/* card-stock */
+.card-stock img {
+    width: 100%;
+}
+.card-stock .card-stock-list {
+    position: absolute;
+    bottom: 150px;
+    right: 110px;
+}
+.card-stock .card-stock-list .card-item {
+    width: 120px;
+    height: 2px;
+    cursor: pointer;
+}
