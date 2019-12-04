@@ -7,11 +7,22 @@ export class Spider extends Card {
     }
 
     // スパイダーソリティア カード初期化
-    getInitCardList() {
-        // カード一式*2 を取得
+    getInitCardList(type) {
+        // カードリストを取得
         let preCardLists = [];
-        for (let i = 0; i < 2; i++) {
-            preCardLists = preCardLists.concat(super.getCardList(true, false));
+        if (type === 'quadruple') {
+            for (let i = 0; i < 2; i++) {
+                preCardLists = preCardLists.concat(super.getCardList(true, false));
+            }
+        } else if (type === 'single') {
+            for (let i = 0; i < 8; i++) {
+                preCardLists = preCardLists.concat(super.getSingleSuitCardList(true, 'spade'));
+            }
+        } else if (type === 'double') {
+            for (let i = 0; i < 4; i++) {
+                preCardLists = preCardLists.concat(super.getSingleSuitCardList(true, 'spade'));
+                preCardLists = preCardLists.concat(super.getSingleSuitCardList(true, 'heart'));
+            }
         }
 
         // すべてのカードにfixedを設定する

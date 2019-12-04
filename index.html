@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>スパイダーソリティア</title>
-    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=M+PLUS+1p&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <!-- BootstrapのCSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
     <!-- Vue.js -->
@@ -14,23 +19,48 @@
     <!-- Sortable -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
     <script type="module" src="script/script.js"></script>
+    <!-- BootstrapのJS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>Spider solitaire</h1>
-    <div id="app">
-        <div class="content">
-            <div class="card-lists">
-            </div>
-            <div class="card-stock">
-                <div class="card-stock-list">
-                    <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
-                    <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
-                    <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
-                    <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
-                    <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
-                </div>
+    <header>
+            <ul>
+                <li><i class="fas fa-undo-alt"></i>元に戻す</li>
+                <li data-toggle="modal" data-target="#resetModal"><i class="fas fa-plus"></i>新しいゲーム</li>
+            </ul>
+            <h1>Spider solitaire</h1>
+    </header>
+    <div class="content">
+        <div class="card-lists">
+        </div>
+        <div class="card-stock">
+            <div class="card-stock-list">
+                <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
+                <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
+                <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
+                <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
+                <div class="card-item"><img src="image/card/back.png" alt="back-card"></div>
             </div>
         </div>
     </div>
+
+    <!-- モーダルの設定 -->
+  <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body" style="color: black;">
+          <ul>
+              <li><a href="index.html?type=quadruple">４スート</a></li>
+              <li><a href="index.html?type=double">２スート</a></li>
+              <li><a href="index.html?type=single">１スート</a></li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
+        </div><!-- /.modal-footer -->
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </body>
 </html>

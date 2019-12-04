@@ -52,6 +52,29 @@ export class Card {
         return cardList;
     }
 
+    // 1 single
+    // 2 double
+    // 3 triple/treble
+    // 4 quadruple
+
+    // カード1種類一式を取得
+    getSingleSuitCardList(hidden, suit) {
+        let cardList = [];
+        for (let i = 0; i < this.numList.length; i++) {
+            let data = {
+                num: this.numList[i],
+                suit: suit
+            }
+            cardList.push({
+                hidden: hidden,
+                isJoker: false,
+                data: data,
+                img: this.getImg(hidden, false, data)
+            });
+        }
+        return cardList;
+    }
+
     // IMGを取得
     getImg(hidden, isJoker, data) {
         let img = '';

@@ -2,9 +2,15 @@ import { Card } from '../script/card.js';
 import { Spider } from '../script/spider.js';
 $(function(){
     let card_lists = [];    // カードリスト配列
+    let type;
+    let startTime, endTime, time;
+
+    // リクエストを取得
+    type = getParam('type');
+    type = type ? type : 'quadruple';
 
     // htmlを初期化
-    initHtml();
+    initHtml(type);
 
     // sortableの初期設定
     initSortable();
@@ -18,18 +24,15 @@ $(function(){
             return;
         } else {
             // カードを配る
-            distribute(cardItems);
-
-            // ストックカードアイテムを一つ取り除く
-            cardItems[0].remove();
+            distribute(cardItems, cardItems[0]);
         }
     }, false);
 
     // htmlを初期化（card-listsクラス内にhtmlを追加）
-    function initHtml() {
+    function initHtml(type) {
         // カードリストを取得
         let spider = new Spider();
-        card_lists = spider.getInitCardList();
+        card_lists = spider.getInitCardList(type);
 
         let html = '';
         for(let i = 0; i < 10; i++) {
@@ -96,10 +99,11 @@ $(function(){
         function onAdd(evt) {
             let item = evt.item.querySelector('img');
             let to = evt.to.parentNode.querySelector('img');
-            let isEmptyBox = evt.to.classList.contains('card-list') && !evt.to.hasChildNodes();
             // 移動可能か判定する
             // 空カードリストの場合
-            if (evt.to.classList.contains('card-list') && evt.to.classList.contains('lead-card')) {
+            if (evt.to.classList.contains('empty-card')) {
+                // 移動先のクラス名を再設定
+                evt.to.classList.remove('empty-card');
                 // 移動後の処理
                 afterAddCard(evt);
             // 移動先のlead-cardクラス かつ 数字が一つ大きい場合
@@ -114,50 +118,68 @@ $(function(){
 
             // 移動後の処理
             function afterAddCard(evt) {
-                // カードをめくる
-                let nextLeadCard = evt.from.parentNode.querySelector('img');
-                let cardData = {
-                    suit: nextLeadCard.dataset.suit,
-                    num: nextLeadCard.dataset.num
-                };
-                let card = new Card();
-                nextLeadCard.setAttribute('src', card.getImg_3(cardData));
+                // 開始時間を取得
+                startTime = startTime ? startTime : performance.now();
 
-                // めくった先のカードのクラス名を設定する
-                if (!evt.from.hasChildNodes()) {
-                    evt.from.classList.add('lead-card');
-                } else {
-                    evt.from.parentNode.classList.add('lead-card');
-                }
-                evt.from.parentNode.classList.remove('card-hidden');
-                resetFixedClass(evt.from);
+                // 移動元のカードリストの設定
+                turnCard(evt.from);
 
-                // 追加先のクラス名を再設定する
+                // 移動先のクラス名を再設定する
                 evt.to.parentNode.classList.remove('lead-card');
                 resetFixedClass(evt.to);
 
                 // 同じマークのカードがエースからキングまで揃った場合
-                let TargetCardList = getParentElement(evt.to, 'card-list');
-                let notFixedItems = TargetCardList.querySelectorAll('.card-item:not(.fixed)');
+                let targetCardList = getParentElement(evt.to, 'card-list');
+                let notFixedItems = targetCardList.querySelectorAll('.card-item:not(.fixed)');
                 if (notFixedItems.length === 13) {
+                    let fromEle = notFixedItems[0].parentNode;
                     notFixedItems[0].remove();
+                    turnCard(fromEle);
+                }
+
+                // カードがすべてなくなった場合
+                let emptyCards = document.querySelectorAll('.empty-card');
+                if (emptyCards.length === 10) {
+                    // 終了時間を取得
+                    endTime = performance.now();
+                    time = (endTime - startTime).toFixed(0);
+                    alert('congratulations!\ntime is\n' + msToTime(time));
+                }
+
+                // 移動元のカードリストの設定
+                function turnCard(ele) {
+                    if (ele.parentNode.classList.contains('card-item')) {
+                        // カードをめくる
+                        let nextLeadCard = ele.parentNode.querySelector('img');
+                        let cardData = {
+                            suit: nextLeadCard.dataset.suit,
+                            num: nextLeadCard.dataset.num
+                        };
+                        let card = new Card();
+                        nextLeadCard.setAttribute('src', card.getImg_3(cardData));
+
+                        // めくった先のカードのクラス名を設定する
+                        ele.parentNode.classList.add('lead-card');
+                        ele.parentNode.classList.remove('card-hidden');
+                        resetFixedClass(ele);
+                    } else if (ele.classList.contains('card-list')) {
+                        ele.classList.add('empty-card');
+                    }
                 }
             }
         }
     }
 
     // カードを配る
-    function distribute(ele) {
+    function distribute(ele, cardStock) {
         // 配るカードリストを取得する
         let length = ele.length;
         let targetCardList = card_lists[9 + length];
 
         // 空リストには配れないように制御
-        let cardLists = document.querySelectorAll('.card-list');
-        for (let i = 0; i < cardLists.length; i++) {
-            if(!cardLists[i].hasChildNodes()) {
-                return alert('カードが配れません');
-            }
+        let emptyCards = document.querySelectorAll('.empty-card');
+        if (emptyCards.length !== 0) {
+            return alert('カードが配れません');
         }
 
         // カードを配る
@@ -179,6 +201,9 @@ $(function(){
         for (let i = 0; i < leadItem.length; i++) {
             resetFixedClass(leadItem[i]);
         }
+
+        // ストックカードアイテムを一つ取り除く
+        cardStock.remove();
 
         // Sortable.jsを初期化
         initSortable();
@@ -234,7 +259,33 @@ $(function(){
             beforeSuit = cardItems[i].querySelector('img').dataset.suit;
             beforeNum = cardItems[i].querySelector('img').dataset.num;
         }
+    }
 
+    // ミリ秒を時間、分、秒の形式に変換する
+    function msToTime(duration) {
+        var milliseconds = parseInt((duration % 1000) / 100)
+            , seconds = parseInt((duration / 1000) % 60)
+            , minutes = parseInt((duration / (1000 * 60)) % 60)
+            , hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+        return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+    }
+
+    // パラメータ内の値を取得
+    function getParam(name) {
+        let url = window.location.href;
+        let st = url.indexOf('?');
+        let requestArr = url.slice(st + 1).split('&');
+        for (let i = 0; i < requestArr.length; i++) {
+            if (name === requestArr[i].split('=')[0]) {
+                return requestArr[i].split('=')[1];
+            }
+        }
+        return '';
     }
 });
 
