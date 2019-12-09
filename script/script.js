@@ -4,6 +4,7 @@ $(function(){
     let card_lists = [];    // カードリスト配列
     let type;
     let startTime, endTime, time;
+    let eventLogLst = [];
 
     // リクエストを取得
     type = getParam('type');
@@ -26,6 +27,42 @@ $(function(){
             // カードを配る
             distribute(cardItems, cardItems[0]);
         }
+    }, false);
+
+    // 「元に戻す」ボタンクリック時
+    let undoBtn = document.querySelector('.undo-btn');
+    undoBtn.addEventListener('click', function(){
+        if (eventLogLst.length === 0) return;
+
+        let evtTarget = eventLogLst[eventLogLst.length - 1];
+
+        // めくったカードを元に戻す
+        if (evtTarget.isTurn) {
+            let card = new Card();
+            evtTarget.evt.from.parentNode.querySelector('img').setAttribute(
+                'src',
+                card.getImg(true)
+            );
+            evtTarget.evt.from.parentNode.classList.add('card-hidden');
+        } else if (evtTarget.isEmpty) {
+            evtTarget.evt.from.classList.remove('empty-card');
+        }
+        console.log(evtTarget.evt.from, evtTarget.evt.to, eventLogLst);
+        evtTarget.evt.from.parentNode.classList.remove('lead-card');
+        resetFixedClass(evtTarget.evt.from);
+
+        // カードを元に戻す
+        $(evtTarget.evt.from).append(evtTarget.evt.item);
+        if (evtTarget.evt.to.classList.contains('card-list')) {
+            evtTarget.evt.to.classList.add('empty-card');
+        } else {
+            evtTarget.evt.to.parentNode.classList.add('lead-card');
+        }
+        resetFixedClass(evtTarget.evt.to);
+
+        // イベントログを更新する
+        eventLogLst.pop();
+
     }, false);
 
     // htmlを初期化（card-listsクラス内にhtmlを追加）
@@ -121,6 +158,10 @@ $(function(){
                 // 開始時間を取得
                 startTime = startTime ? startTime : performance.now();
 
+                // イベントログを更新
+                let isTurn = (evt.from.parentNode.classList.contains('card-hidden'));
+                eventLogLst.push({evt: evt, isTurn: isTurn, isEmpty: false});
+
                 // 移動元のカードリストの設定
                 turnCard(evt.from);
 
@@ -135,6 +176,8 @@ $(function(){
                     let fromEle = notFixedItems[0].parentNode;
                     notFixedItems[0].remove();
                     turnCard(fromEle);
+                    // イベントログを初期化
+                    eventLogLst = [];
                 }
 
                 // カードがすべてなくなった場合
@@ -162,10 +205,15 @@ $(function(){
                         ele.parentNode.classList.add('lead-card');
                         ele.parentNode.classList.remove('card-hidden');
                         resetFixedClass(ele);
+
                     } else if (ele.classList.contains('card-list')) {
                         ele.classList.add('empty-card');
+
+                        // イベントログの更新
+                        eventLogLst[eventLogLst.length - 1].isEmpty = true;
                     }
                 }
+
             }
         }
     }
@@ -208,6 +256,9 @@ $(function(){
         // Sortable.jsを初期化
         initSortable();
 
+        // イベントログを初期化
+        eventLogLst = [];
+
         // htmlを生成する
         function createCardItem(targetCardList, idx) {
             let html = '';
@@ -236,6 +287,7 @@ $(function(){
         let cardListBase = getParentElement(ele, 'card-list');
         let cardItems = cardListBase.querySelectorAll('.card-item');
         let isBeforeFixed, beforeSuit, beforeNum;
+        console.log(cardListBase);
         for (let i = cardItems.length - 1; i > -1; i--) {
             // カードが裏絵の場合
             if (cardItems[i].classList.contains('hidden')) {

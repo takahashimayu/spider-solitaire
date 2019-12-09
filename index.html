@@ -26,7 +26,7 @@
 <body>
     <header>
             <ul>
-                <li><i class="fas fa-undo-alt"></i>元に戻す</li>
+                <li class="undo-btn"><i class="fas fa-undo-alt"></i>元に戻す</li>
                 <li data-toggle="modal" data-target="#resetModal"><i class="fas fa-plus"></i>新しいゲーム</li>
             </ul>
             <h1>Spider solitaire</h1>
@@ -50,10 +50,11 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body" style="color: black;">
+          <p>※現在のゲームはリセットされます。ご注意下さい</p>
           <ul>
-              <li><a href="index.html?type=quadruple">４スート</a></li>
-              <li><a href="index.html?type=double">２スート</a></li>
               <li><a href="index.html?type=single">１スート</a></li>
+              <li><a href="index.html?type=double">２スート</a></li>
+              <li><a href="index.html?type=quadruple">４スート</a></li>
           </ul>
         </div>
         <div class="modal-footer">

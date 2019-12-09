@@ -115,6 +115,9 @@ h1 {
     line-height: 2em;
     text-align: center;
 }
+.empty-card {
+    border: 2px solid red;
+}
 
 #resetModal a:hover {
     text-decoration: none;
